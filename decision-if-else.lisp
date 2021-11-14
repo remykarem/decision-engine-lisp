@@ -1,14 +1,24 @@
-(defparameter *name* "a")
-(defparameter *age* 18)
+(defun yesp (y)
+  (or (string-equal y "y") (string= y "")))
 
-(defmacro ? (param test &key yes no)
-    (if (concatenate 'list test '(param)) yes no))
+(defun ask (qn &key y n)
+    (print (concatenate 'string qn " (y/n)"))
+    (finish-output)
+    (let ((response (read-line)))
+        (if (yesp response)
+            (if (stringp y) (print y) (apply #'ask y))
+            (if (stringp n) (print n) (apply #'ask n)))))
 
-(print
-    (? *name* '(string= "a")
-      :yes (? *age* '(= 18)
-             :yes 8 
-             :no  100)
-      :no  1000))
+(defun start (qns)
+    (apply #'ask qns))
 
-(print (eval (read-from-string "(1+ 8)")))
+(start 
+    '("Have you learned this material before?"
+        :y ("You from Singapore?"
+            :y "Awesome!"
+            :n "Come to Singapore then?")
+        :n ("Are there equations on the screen?" 
+            :y "1x" 
+            :n ("Is the lecturer speaking quickly?"
+                :y "1.25x"
+                :n "1.5x"))))
